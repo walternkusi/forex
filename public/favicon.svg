@@ -1,0 +1,58 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#0066CC" stroke="#00CCFF" stroke-width="2"/>
+  
+  <!-- Robot head -->
+  <g id="robot-head">
+    <!-- Head base -->
+    <rect x="60" y="40" width="80" height="85" rx="8" fill="#E0E0E0" stroke="#333" stroke-width="2"/>
+    
+    <!-- Head shine -->
+    <rect x="65" y="45" width="70" height="30" rx="6" fill="#F5F5F5" opacity="0.6"/>
+    
+    <!-- Left eye -->
+    <circle cx="75" cy="70" r="12" fill="#0066CC" stroke="#333" stroke-width="1.5"/>
+    <circle cx="75" cy="70" r="8" fill="#00CCFF"/>
+    <circle cx="77" cy="68" r="4" fill="#FFFFFF"/>
+    
+    <!-- Right eye -->
+    <circle cx="125" cy="70" r="12" fill="#0066CC" stroke="#333" stroke-width="1.5"/>
+    <circle cx="125" cy="70" r="8" fill="#00CCFF"/>
+    <circle cx="127" cy="68" r="4" fill="#FFFFFF"/>
+    
+    <!-- Mouth -->
+    <path d="M 80 95 Q 100 105 120 95" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- Antenna -->
+    <line x1="100" y1="40" x2="100" y2="15" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="100" cy="12" r="5" fill="#0066CC" stroke="#333" stroke-width="1.5"/>
+  </g>
+  
+  <!-- Left arm with chart -->
+  <g id="left-arm">
+    <rect x="30" y="85" width="30" height="15" rx="7" fill="#E0E0E0" stroke="#333" stroke-width="1.5"/>
+    <!-- Mini chart bars -->
+    <rect x="35" y="92" width="4" height="8" fill="#FF4444"/>
+    <rect x="41" y="88" width="4" height="12" fill="#44FF44"/>
+    <rect x="47" y="90" width="4" height="10" fill="#FF4444"/>
+  </g>
+  
+  <!-- Right arm with arrow -->
+  <g id="right-arm">
+    <rect x="140" y="85" width="30" height="15" rx="7" fill="#E0E0E0" stroke="#333" stroke-width="1.5"/>
+    <!-- Arrow pointing up -->
+    <path d="M 155 98 L 155 88 M 150 93 L 155 88 L 160 93" stroke="#44FF44" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Body -->
+  <rect x="70" y="125" width="60" height="50" rx="6" fill="#0066CC" stroke="#333" stroke-width="2"/>
+  
+  <!-- Body details -->
+  <circle cx="85" cy="140" r="4" fill="#00CCFF"/>
+  <circle cx="100" cy="140" r="4" fill="#00CCFF"/>
+  <circle cx="115" cy="140" r="4" fill="#00CCFF"/>
+  
+  <circle cx="85" cy="160" r="4" fill="#44FF44"/>
+  <circle cx="100" cy="160" r="4" fill="#44FF44"/>
+  <circle cx="115" cy="160" r="4" fill="#44FF44"/>
+</svg>
