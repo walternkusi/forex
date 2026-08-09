@@ -1,0 +1,15 @@
+tools:
+    shell:
+        allow:
+            - cd *
+            - npm run *
+            - npx tsc *
+            - cat *
+            - tail *
+            - powershell *
+            - npm install
+            - Get-Content *
+            - Remove-Item *
+            - echo *
+            - npm uninstall *
+            - npm install *

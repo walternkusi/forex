@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.next/
+Disallow: /admin/
+
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl delay (in seconds)
+Crawl-delay: 1
