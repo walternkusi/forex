@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
+// Log the API key status (but not the actual key for security)
+console.log('Gemini API Key configured:', !!process.env.GEMINI_API_KEY)
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+
+// Fallback analysis for when Gemini is unavailable
+const FALLBACK_ANALYSIS = {
+  tradeDirection: 'WAIT',
+  reasoning: 'Unable to analyze chart - AI service temporarily unavailable. Please try again later.',
+  entryZone: 'N/A',
+  stopLoss: 'N/A',
+  takeProfit1: 'N/A',
+  takeProfit2: 'N/A',
+  takeProfit3: 'N/A',
+  riskReward: 'N/A',
+  confidence: 1
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,10 +114,21 @@ Analyze the chart carefully and provide REALISTIC entry zones with clear reasoni
         console.log(`✅ Success with model: ${modelName}`)
         break
       } catch (modelError: any) {
-        console.log(`❌ Model ${modelName} failed:`, modelError.message)
+        console.error(`Model ${modelName} failed:`, {
+          message: modelError.message,
+          stack: modelError.stack?.split('\n').slice(0, 5).join('\n')
+        })
         if (modelName === models[models.length - 1]) {
-          // All models failed
-          throw new Error('All AI models are currently unavailable. Please try again later.')
+          // All models failed - log detailed error info
+          console.error('All Gemini models failed after 3 attempts. Error types tried:', models)
+          // Create a custom error with additional context
+          const errorWithContext: any = new Error(
+            `All AI models unavailable. Tried: ${models.join(', ')}. ` +
+            `First error was: ${modelError.message}`
+          )
+          errorWithContext.firstError = modelError
+          errorWithContext.attemptedModels = models
+          throw errorWithContext
         }
         continue
       }
@@ -183,23 +210,41 @@ Analyze the chart carefully and provide REALISTIC entry zones with clear reasoni
         timestamp: new Date().toISOString(),
       })
     } catch (error: any) {
-      console.error('Chart analysis error:', error)
+      console.error('Chart analysis error:', {
+        message: error.message,
+        attemptedModels: error.attemptedModels,
+        firstError: error.firstError?.message,
+        stack: error.stack?.split('\n').slice(0, 10).join('\n')
+      })
       
       let errorMessage = 'Analysis failed'
+      let debugInfo = ''
       
       if (error.message?.includes('model') || error.message?.includes('unavailable')) {
         errorMessage = 'Model unavailable. Please try again in a moment.'
-      } else if (error.message?.includes('API key')) {
+        debugInfo = `Tried models: ${error.attemptedModels?.join(', ') || 'unknown'}`
+      } else if (error.message?.includes('API key') || error.message?.includes('api_key')) {
         errorMessage = 'API key error. Please check your configuration.'
-      } else if (error.message?.includes('fetch failed')) {
+        debugInfo = 'Gemini API key may be missing or invalid'
+      } else if (error.message?.includes('fetch failed') || error.message?.includes('ECONN')) {
         errorMessage = 'Network error. Please check your connection.'
+        debugInfo = 'Unable to reach Gemini API servers'
+      } else if (error.message?.includes('quota') || error.message?.includes('limit')) {
+        errorMessage = 'API quota exceeded. Please try again later.'
+        debugInfo = 'You may have hit the Gemini API limit'
+      }
+      
+      // Log debug info in development
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Debug info:', debugInfo)
       }
       
       return NextResponse.json(
         { 
           success: false, 
           message: errorMessage,
-          error: error.message
+          error: error.message,
+          debugInfo: process.env.NODE_ENV !== 'production' ? debugInfo : undefined
         },
         { status: 500 }
       )
